@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Swish</title>
+  <script src="main.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-firestore.js"></script>
+
+</head>
+
+<body>
+  <script>
+  var config = {
+    apiKey: "AIzaSyANBiSXpPN0AfkjbKR4aVgoSd34i4BSBHw",
+    authDomain: "swish-1a360.firebaseapp.com",
+    databaseURL: "https://swish-1a360.firebaseio.com",
+    projectId: "swish-1a360",
+    storageBucket: "swish-1a360.appspot.com",
+    messagingSenderId: "98273451761"
+  };
+  firebase.initializeApp(config);
+      var firestore = firebase.firestore();
+      const docRef = firestore.collection("Courses");
+      var app = Elm.Main.fullscreen();
+
+     docRef.get().then(function(querySnapshot) {
+        var courseList = [];
+        querySnapshot.forEach(function(doc) {
+          courseList.push(doc.id);
+          
+        });
+        app.ports.loadLesson.send(courseList);
+        });
+
+    </script>
+
+    <button id="loadButton">Load</button>
+    <script src="app.js"></script>
+</body>
