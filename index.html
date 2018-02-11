@@ -32,12 +32,10 @@
           courseList.push(doc.id);
           console.log(doc.data().name);
 
+
         });
         app.ports.loadLesson.send(courseList);
         });
 
     </script>
-
-    <button id="loadButton">Load</button>
-    <script src="app.js"></script>
 </body>
