@@ -30,7 +30,8 @@
         var courseList = [];
         querySnapshot.forEach(function(doc) {
           courseList.push(doc.id);
-          
+          console.log(doc.data().name);
+
         });
         app.ports.loadLesson.send(courseList);
         });
