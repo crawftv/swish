@@ -23,14 +23,19 @@
   };
   firebase.initializeApp(config);
       var firestore = firebase.firestore();
-      const docRef = firestore.collection("Courses");
+      const docRef = firestore.collection("Italian");
       var app = Elm.Main.fullscreen();
 
      docRef.get().then(function(querySnapshot) {
         var courseList = [];
         querySnapshot.forEach(function(doc) {
-          courseList.push(doc.id);
-          console.log(doc.data().name);
+          courseList.push(doc.data().name);
+          var exerciseList = doc.data().exercises;
+          console.log(typeof exerciseList);
+          
+
+
+          // app.ports.loadExercise.send(doc.data().exercises);
 
 
         });
