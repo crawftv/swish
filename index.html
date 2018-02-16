@@ -23,10 +23,28 @@
   };
   firebase.initializeApp(config);
     var firestore = firebase.firestore();
+    var courseRef = firestore.collection("Courses").doc("CourseList");
     const docRef = firestore.collection("Italian");
+    var lessonListRef = firestore.collection("Italian").doc("LessonList");
     var app = Elm.Main.fullscreen();
     var course = "Italian";
     var lessonName = "Lesson 1";
+
+    courseRef.get().then(function(doc){
+      courseList = [];
+      courseList = doc.data().Courses;
+      app.ports.loadCourse.send(courseList);
+    })
+
+
+    lessonListRef.get().then(function(doc){
+      lessonList = [];
+      lessonList = doc.data().LessonNames;
+      app.ports.loadLesson.send(lessonList);
+      });
+
+
+
     var query = docRef.where("course", "==", course).where("lessonName", "==", lessonName);
     query.get().then(function(querySnapshot) {
        var exerciseList = [];
@@ -34,23 +52,13 @@
        querySnapshot.forEach(function(doc) {
          exerciseObject.q = doc.data().q;
          exerciseObject.a = doc.data().a;
-         console.log(exerciseObject);
          exerciseList.push(exerciseObject);
        });
        console.log(exerciseList);
-       // app.ports.loadLesson.send(courseList);
+       // app.ports.loadLesson.send(exerciseList);
        });
 
-     // docRef.get().then(function(querySnapshot) {
-     //    var courseList = [];
-     //    querySnapshot.forEach(function(doc) {
-     //      courseList.push(doc.data().name);
-     //      var exerciseList = doc.data().exercises;
-     //      console.log(exerciseList);
-     //      // app.ports.loadExercise.send(doc.data().exercises);
-     //    });
-     //    // app.ports.loadLesson.send(courseList);
-     //    });
+
 
     </script>
 </body>

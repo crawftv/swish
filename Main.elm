@@ -7,9 +7,8 @@ import Html.Attributes exposing (..)
 
 type alias Model =
     { answerInput : String
-    , courseList :
-        List String
-        -- , exerciseList : Exercises
+    , courseList : List String
+    , lessonList : List String
     }
 
 
@@ -30,6 +29,7 @@ type alias ExercisePairs =
 
 type Msg
     = InputAnswer String
+    | CourseListLoaded (List String)
     | LessonListLoaded (List String)
 
 
@@ -55,7 +55,7 @@ init =
 initModel : Model
 initModel =
     -- { answerInput = "", courseList = [], exerciseList = {[]} }
-    { answerInput = "", courseList = [] }
+    { answerInput = "", courseList = [], lessonList = [] }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -64,8 +64,11 @@ update msg model =
         InputAnswer answerInput ->
             ( { model | answerInput = answerInput }, Cmd.none )
 
-        LessonListLoaded loadCourse ->
+        CourseListLoaded loadCourse ->
             ( { model | courseList = loadCourse }, Cmd.none )
+
+        LessonListLoaded loadLessonList ->
+            ( { model | lessonList = loadLessonList }, Cmd.none )
 
 
 
@@ -76,14 +79,17 @@ update msg model =
 port loadLesson : (List String -> msg) -> Sub msg
 
 
+port loadCourse : (List String -> msg) -> Sub msg
+
+
 port loadExercise : (Exercises -> msg) -> Sub msg
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
-        [ loadLesson LessonListLoaded
-          -- , loadExercise ExerciseListLoaded
+        [ loadCourse CourseListLoaded
+        , loadLesson LessonListLoaded
         ]
 
 
@@ -95,6 +101,19 @@ courseView course =
 
 courseListView : List String -> Html Msg
 courseListView courses =
+    courses
+        |> List.map courseView
+        |> ul []
+
+
+lessonView : String -> Html Msg
+lessonView course =
+    li []
+        [ text course ]
+
+
+lessonListView : List String -> Html Msg
+lessonListView courses =
     courses
         |> List.map courseView
         |> ul []
@@ -119,6 +138,9 @@ courseListView courses =
 view : Model -> Html Msg
 view model =
     div []
-        [ courseListView model.courseList
+        [ text "Courses"
+        , courseListView model.courseList
+        , text "lessons"
+        , lessonListView model.lessonList
         , text "elm Works"
         ]

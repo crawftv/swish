@@ -8260,41 +8260,15 @@ var _elm_lang$html$Html_Events$Options = F2(
 		return {stopPropagation: a, preventDefault: b};
 	});
 
-var _user$project$Main$exerciseView = function (exercise) {
+var _user$project$Main$lessonView = function (course) {
 	return A2(
-		_elm_lang$html$Html$tr,
+		_elm_lang$html$Html$li,
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$td,
-				{ctor: '[]'},
-				{
-					ctor: '::',
-					_0: _elm_lang$html$Html$text(
-						_elm_lang$core$Basics$toString(exercise.q)),
-					_1: {ctor: '[]'}
-				}),
-			_1: {
-				ctor: '::',
-				_0: A2(
-					_elm_lang$html$Html$td,
-					{ctor: '[]'},
-					{
-						ctor: '::',
-						_0: _elm_lang$html$Html$text(
-							_elm_lang$core$Basics$toString(exercise.a)),
-						_1: {ctor: '[]'}
-					}),
-				_1: {ctor: '[]'}
-			}
+			_0: _elm_lang$html$Html$text(course),
+			_1: {ctor: '[]'}
 		});
-};
-var _user$project$Main$exerciseListView = function (exercises) {
-	return A2(
-		_elm_lang$html$Html$tbody,
-		{ctor: '[]'},
-		A2(_elm_lang$core$List$map, _user$project$Main$exerciseView, exercises));
 };
 var _user$project$Main$courseView = function (course) {
 	return A2(
@@ -8312,17 +8286,35 @@ var _user$project$Main$courseListView = function (courses) {
 		{ctor: '[]'},
 		A2(_elm_lang$core$List$map, _user$project$Main$courseView, courses));
 };
+var _user$project$Main$lessonListView = function (courses) {
+	return A2(
+		_elm_lang$html$Html$ul,
+		{ctor: '[]'},
+		A2(_elm_lang$core$List$map, _user$project$Main$courseView, courses));
+};
 var _user$project$Main$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
 		{
 			ctor: '::',
-			_0: _user$project$Main$courseListView(model.courseList),
+			_0: _elm_lang$html$Html$text('Courses'),
 			_1: {
 				ctor: '::',
-				_0: _elm_lang$html$Html$text('elm Works'),
-				_1: {ctor: '[]'}
+				_0: _user$project$Main$courseListView(model.courseList),
+				_1: {
+					ctor: '::',
+					_0: _elm_lang$html$Html$text('lessons'),
+					_1: {
+						ctor: '::',
+						_0: _user$project$Main$lessonListView(model.lessonList),
+						_1: {
+							ctor: '::',
+							_0: _elm_lang$html$Html$text('elm Works'),
+							_1: {ctor: '[]'}
+						}
+					}
+				}
 			}
 		});
 };
@@ -8338,7 +8330,7 @@ var _user$project$Main$update = F2(
 						{answerInput: _p0._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			case 'LessonListLoaded':
+			case 'CourseListLoaded':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -8351,7 +8343,7 @@ var _user$project$Main$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{exerciseList: _p0._0}),
+						{lessonList: _p0._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 		}
@@ -8359,52 +8351,67 @@ var _user$project$Main$update = F2(
 var _user$project$Main$initModel = {
 	answerInput: '',
 	courseList: {ctor: '[]'},
-	exerciseList: {ctor: '[]'}
+	lessonList: {ctor: '[]'}
 };
 var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initModel, _1: _elm_lang$core$Platform_Cmd$none};
 var _user$project$Main$loadLesson = _elm_lang$core$Native_Platform.incomingPort(
 	'loadLesson',
 	_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string));
+var _user$project$Main$loadCourse = _elm_lang$core$Native_Platform.incomingPort(
+	'loadCourse',
+	_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string));
 var _user$project$Main$loadExercise = _elm_lang$core$Native_Platform.incomingPort(
 	'loadExercise',
-	_elm_lang$core$Json_Decode$list(
+	A2(
+		_elm_lang$core$Json_Decode$andThen,
+		function (exerciseObjects) {
+			return _elm_lang$core$Json_Decode$succeed(
+				{exerciseObjects: exerciseObjects});
+		},
 		A2(
-			_elm_lang$core$Json_Decode$andThen,
-			function (q) {
-				return A2(
+			_elm_lang$core$Json_Decode$field,
+			'exerciseObjects',
+			_elm_lang$core$Json_Decode$list(
+				A2(
 					_elm_lang$core$Json_Decode$andThen,
-					function (a) {
-						return _elm_lang$core$Json_Decode$succeed(
-							{q: q, a: a});
+					function (q) {
+						return A2(
+							_elm_lang$core$Json_Decode$andThen,
+							function (a) {
+								return _elm_lang$core$Json_Decode$succeed(
+									{q: q, a: a});
+							},
+							A2(_elm_lang$core$Json_Decode$field, 'a', _elm_lang$core$Json_Decode$string));
 					},
-					A2(_elm_lang$core$Json_Decode$field, 'a', _elm_lang$core$Json_Decode$string));
-			},
-			A2(_elm_lang$core$Json_Decode$field, 'q', _elm_lang$core$Json_Decode$string))));
+					A2(_elm_lang$core$Json_Decode$field, 'q', _elm_lang$core$Json_Decode$string))))));
 var _user$project$Main$Model = F3(
 	function (a, b, c) {
-		return {answerInput: a, courseList: b, exerciseList: c};
+		return {answerInput: a, courseList: b, lessonList: c};
 	});
 var _user$project$Main$Lesson = function (a) {
 	return {id: a};
 };
-var _user$project$Main$Exercise = F2(
+var _user$project$Main$Exercises = function (a) {
+	return {exerciseObjects: a};
+};
+var _user$project$Main$ExercisePairs = F2(
 	function (a, b) {
 		return {q: a, a: b};
 	});
-var _user$project$Main$ExerciseListLoaded = function (a) {
-	return {ctor: 'ExerciseListLoaded', _0: a};
-};
 var _user$project$Main$LessonListLoaded = function (a) {
 	return {ctor: 'LessonListLoaded', _0: a};
+};
+var _user$project$Main$CourseListLoaded = function (a) {
+	return {ctor: 'CourseListLoaded', _0: a};
 };
 var _user$project$Main$subscriptions = function (model) {
 	return _elm_lang$core$Platform_Sub$batch(
 		{
 			ctor: '::',
-			_0: _user$project$Main$loadLesson(_user$project$Main$LessonListLoaded),
+			_0: _user$project$Main$loadCourse(_user$project$Main$CourseListLoaded),
 			_1: {
 				ctor: '::',
-				_0: _user$project$Main$loadExercise(_user$project$Main$ExerciseListLoaded),
+				_0: _user$project$Main$loadLesson(_user$project$Main$LessonListLoaded),
 				_1: {ctor: '[]'}
 			}
 		});
