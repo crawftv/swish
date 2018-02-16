@@ -9,19 +9,11 @@ type alias Model =
     { answerInput : String
     , courseList : List String
     , lessonList : List String
+    , exerciseList : List Exercise
     }
 
 
-type alias Lesson =
-    { id : String }
-
-
-type alias Exercises =
-    { exerciseObjects : List ExercisePairs
-    }
-
-
-type alias ExercisePairs =
+type alias Exercise =
     { q : String
     , a : String
     }
@@ -31,6 +23,7 @@ type Msg
     = InputAnswer String
     | CourseListLoaded (List String)
     | LessonListLoaded (List String)
+    | ExerciseListLoaded (List Exercise)
 
 
 
@@ -55,7 +48,7 @@ init =
 initModel : Model
 initModel =
     -- { answerInput = "", courseList = [], exerciseList = {[]} }
-    { answerInput = "", courseList = [], lessonList = [] }
+    { answerInput = "", courseList = [], lessonList = [], exerciseList = [] }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -70,10 +63,8 @@ update msg model =
         LessonListLoaded loadLessonList ->
             ( { model | lessonList = loadLessonList }, Cmd.none )
 
-
-
--- ExerciseListLoaded loadExerciseList ->
---     ( { model | exerciseList = loadExerciseList }, Cmd.none )
+        ExerciseListLoaded loadExerciseList ->
+            ( { model | exerciseList = loadExerciseList }, Cmd.none )
 
 
 port loadLesson : (List String -> msg) -> Sub msg
@@ -82,7 +73,7 @@ port loadLesson : (List String -> msg) -> Sub msg
 port loadCourse : (List String -> msg) -> Sub msg
 
 
-port loadExercise : (Exercises -> msg) -> Sub msg
+port loadExerciseList : (List Exercise -> msg) -> Sub msg
 
 
 subscriptions : Model -> Sub Msg
@@ -90,6 +81,7 @@ subscriptions model =
     Sub.batch
         [ loadCourse CourseListLoaded
         , loadLesson LessonListLoaded
+        , loadExerciseList ExerciseListLoaded
         ]
 
 
@@ -119,20 +111,19 @@ lessonListView courses =
         |> ul []
 
 
+exerciseView : Exercise -> Html Msg
+exerciseView exercise =
+    tr []
+        [ td [] [ text (toString exercise.q) ]
+        , td [] [ text (toString exercise.a) ]
+        ]
 
--- exerciseView : Exercises -> Html Msg
--- exerciseView exercise =
---     tr []
---         [ td [] [ text (toString exercise.q) ]
---         , td [] [ text (toString exercise.a) ]
---         ]
---
--- exerciseListView : List Exercises -> Html Msg
--- exerciseListView exercises =
---     exercises
---         |> List.map exerciseView
---         |> tbody []
---
+
+exerciseListView : List Exercise -> Html Msg
+exerciseListView exercises =
+    exercises
+        |> List.map exerciseView
+        |> tbody []
 
 
 view : Model -> Html Msg
@@ -142,5 +133,7 @@ view model =
         , courseListView model.courseList
         , text "lessons"
         , lessonListView model.lessonList
+        , text "exercises"
+        , exerciseListView model.exerciseList
         , text "elm Works"
         ]
