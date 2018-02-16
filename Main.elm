@@ -26,10 +26,6 @@ type Msg
     | ExerciseListLoaded (List Exercise)
 
 
-
--- | ExerciseListLoaded Exercises
-
-
 main : Program Never Model Msg
 main =
     Html.program
@@ -47,7 +43,6 @@ init =
 
 initModel : Model
 initModel =
-    -- { answerInput = "", courseList = [], exerciseList = {[]} }
     { answerInput = "", courseList = [], lessonList = [], exerciseList = [] }
 
 
@@ -114,7 +109,7 @@ lessonListView courses =
 exerciseView : Exercise -> Html Msg
 exerciseView exercise =
     tr []
-        [ td [] [ text (toString exercise.q) ]
+        [ td [] [ text exercise.q ]
         , td [] [ input [] [] ]
         ]
 
