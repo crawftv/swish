@@ -115,7 +115,7 @@ exerciseView : Exercise -> Html Msg
 exerciseView exercise =
     tr []
         [ td [] [ text (toString exercise.q) ]
-        , td [] [ text (toString exercise.a) ]
+        , td [] [ input [] [] ]
         ]
 
 
