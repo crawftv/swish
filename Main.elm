@@ -24,6 +24,8 @@ type Msg
     | CourseListLoaded (List String)
     | LessonListLoaded (List String)
     | ExerciseListLoaded (List Exercise)
+    | SendCourseName String
+    | ClearLessonList
 
 
 main : Program Never Model Msg
@@ -61,8 +63,17 @@ update msg model =
         ExerciseListLoaded loadExerciseList ->
             ( { model | exerciseList = loadExerciseList }, Cmd.none )
 
+        SendCourseName courseName ->
+            ( model, sendCourse courseName )
+
+        ClearLessonList ->
+            ( { model | lessonList = [] }, Cmd.none )
+
 
 port loadLesson : (List String -> msg) -> Sub msg
+
+
+port sendCourse : String -> Cmd msg
 
 
 port loadCourse : (List String -> msg) -> Sub msg
@@ -82,7 +93,10 @@ subscriptions model =
 
 courseView : String -> Html Msg
 courseView course =
-    li []
+    li
+        [ onClick (ClearLessonList)
+        , onClick (SendCourseName course)
+        ]
         [ text course ]
 
 

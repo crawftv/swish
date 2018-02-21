@@ -8307,10 +8307,118 @@ var _user$project$Main$lessonView = function (course) {
 			_1: {ctor: '[]'}
 		});
 };
+var _user$project$Main$initModel = {
+	answerInput: '',
+	courseList: {ctor: '[]'},
+	lessonList: {ctor: '[]'},
+	exerciseList: {ctor: '[]'}
+};
+var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initModel, _1: _elm_lang$core$Platform_Cmd$none};
+var _user$project$Main$loadLesson = _elm_lang$core$Native_Platform.incomingPort(
+	'loadLesson',
+	_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string));
+var _user$project$Main$sendCourse = _elm_lang$core$Native_Platform.outgoingPort(
+	'sendCourse',
+	function (v) {
+		return v;
+	});
+var _user$project$Main$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'InputAnswer':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{answerInput: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'CourseListLoaded':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{courseList: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'LessonListLoaded':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{lessonList: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'ExerciseListLoaded':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{exerciseList: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'SendCourseName':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Main$sendCourse(_p0._0)
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							lessonList: {ctor: '[]'}
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+		}
+	});
+var _user$project$Main$loadCourse = _elm_lang$core$Native_Platform.incomingPort(
+	'loadCourse',
+	_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string));
+var _user$project$Main$loadExerciseList = _elm_lang$core$Native_Platform.incomingPort(
+	'loadExerciseList',
+	_elm_lang$core$Json_Decode$list(
+		A2(
+			_elm_lang$core$Json_Decode$andThen,
+			function (q) {
+				return A2(
+					_elm_lang$core$Json_Decode$andThen,
+					function (a) {
+						return _elm_lang$core$Json_Decode$succeed(
+							{q: q, a: a});
+					},
+					A2(_elm_lang$core$Json_Decode$field, 'a', _elm_lang$core$Json_Decode$string));
+			},
+			A2(_elm_lang$core$Json_Decode$field, 'q', _elm_lang$core$Json_Decode$string))));
+var _user$project$Main$Model = F4(
+	function (a, b, c, d) {
+		return {answerInput: a, courseList: b, lessonList: c, exerciseList: d};
+	});
+var _user$project$Main$Exercise = F2(
+	function (a, b) {
+		return {q: a, a: b};
+	});
+var _user$project$Main$ClearLessonList = {ctor: 'ClearLessonList'};
+var _user$project$Main$SendCourseName = function (a) {
+	return {ctor: 'SendCourseName', _0: a};
+};
 var _user$project$Main$courseView = function (course) {
 	return A2(
 		_elm_lang$html$Html$li,
-		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$ClearLessonList),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onClick(
+					_user$project$Main$SendCourseName(course)),
+				_1: {ctor: '[]'}
+			}
+		},
 		{
 			ctor: '::',
 			_0: _elm_lang$html$Html$text(course),
@@ -8363,80 +8471,6 @@ var _user$project$Main$view = function (model) {
 			}
 		});
 };
-var _user$project$Main$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
-			case 'InputAnswer':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{answerInput: _p0._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'CourseListLoaded':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{courseList: _p0._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			case 'LessonListLoaded':
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{lessonList: _p0._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-			default:
-				return {
-					ctor: '_Tuple2',
-					_0: _elm_lang$core$Native_Utils.update(
-						model,
-						{exerciseList: _p0._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
-				};
-		}
-	});
-var _user$project$Main$initModel = {
-	answerInput: '',
-	courseList: {ctor: '[]'},
-	lessonList: {ctor: '[]'},
-	exerciseList: {ctor: '[]'}
-};
-var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initModel, _1: _elm_lang$core$Platform_Cmd$none};
-var _user$project$Main$loadLesson = _elm_lang$core$Native_Platform.incomingPort(
-	'loadLesson',
-	_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string));
-var _user$project$Main$loadCourse = _elm_lang$core$Native_Platform.incomingPort(
-	'loadCourse',
-	_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string));
-var _user$project$Main$loadExerciseList = _elm_lang$core$Native_Platform.incomingPort(
-	'loadExerciseList',
-	_elm_lang$core$Json_Decode$list(
-		A2(
-			_elm_lang$core$Json_Decode$andThen,
-			function (q) {
-				return A2(
-					_elm_lang$core$Json_Decode$andThen,
-					function (a) {
-						return _elm_lang$core$Json_Decode$succeed(
-							{q: q, a: a});
-					},
-					A2(_elm_lang$core$Json_Decode$field, 'a', _elm_lang$core$Json_Decode$string));
-			},
-			A2(_elm_lang$core$Json_Decode$field, 'q', _elm_lang$core$Json_Decode$string))));
-var _user$project$Main$Model = F4(
-	function (a, b, c, d) {
-		return {answerInput: a, courseList: b, lessonList: c, exerciseList: d};
-	});
-var _user$project$Main$Exercise = F2(
-	function (a, b) {
-		return {q: a, a: b};
-	});
 var _user$project$Main$ExerciseListLoaded = function (a) {
 	return {ctor: 'ExerciseListLoaded', _0: a};
 };
