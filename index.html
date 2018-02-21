@@ -24,7 +24,7 @@
   firebase.initializeApp(config);
     var firestore = firebase.firestore();
     var courseRef = firestore.collection("Courses").doc("CourseList");
-
+    // var docRef = firestore.collection(courseName);
     var lessonListRef = firestore.collection("Italian").doc("LessonList");
     var app = Elm.Main.fullscreen();
     var course = "Italian";
@@ -40,7 +40,7 @@
 
 
     app.ports.sendCourse.subscribe(function(courseName) {
-      var docRef = firestore.collection(courseName);
+      var lessonListRef = firestore.collection(courseName).doc("LessonList");
       lessonListRef.get().then(function(doc){
         lessonList = [];
         lessonList = doc.data().LessonNames;
