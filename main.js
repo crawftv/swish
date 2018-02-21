@@ -8297,16 +8297,6 @@ var _user$project$Main$exerciseListView = function (exercises) {
 		{ctor: '[]'},
 		A2(_elm_lang$core$List$map, _user$project$Main$exerciseView, exercises));
 };
-var _user$project$Main$lessonView = function (course) {
-	return A2(
-		_elm_lang$html$Html$li,
-		{ctor: '[]'},
-		{
-			ctor: '::',
-			_0: _elm_lang$html$Html$text(course),
-			_1: {ctor: '[]'}
-		});
-};
 var _user$project$Main$initModel = {
 	answerInput: '',
 	courseList: {ctor: '[]'},
@@ -8319,6 +8309,11 @@ var _user$project$Main$loadLesson = _elm_lang$core$Native_Platform.incomingPort(
 	_elm_lang$core$Json_Decode$list(_elm_lang$core$Json_Decode$string));
 var _user$project$Main$sendCourse = _elm_lang$core$Native_Platform.outgoingPort(
 	'sendCourse',
+	function (v) {
+		return v;
+	});
+var _user$project$Main$sendLesson = _elm_lang$core$Native_Platform.outgoingPort(
+	'sendLesson',
 	function (v) {
 		return v;
 	});
@@ -8364,6 +8359,12 @@ var _user$project$Main$update = F2(
 					_0: model,
 					_1: _user$project$Main$sendCourse(_p0._0)
 				};
+			case 'SendLessonName':
+				return {
+					ctor: '_Tuple2',
+					_0: model,
+					_1: _user$project$Main$sendLesson(_p0._0)
+				};
 			default:
 				return {
 					ctor: '_Tuple2',
@@ -8403,6 +8404,30 @@ var _user$project$Main$Exercise = F2(
 		return {q: a, a: b};
 	});
 var _user$project$Main$ClearLessonList = {ctor: 'ClearLessonList'};
+var _user$project$Main$SendLessonName = function (a) {
+	return {ctor: 'SendLessonName', _0: a};
+};
+var _user$project$Main$lessonView = function (lesson) {
+	return A2(
+		_elm_lang$html$Html$li,
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html_Events$onClick(
+				_user$project$Main$SendLessonName(lesson)),
+			_1: {ctor: '[]'}
+		},
+		{
+			ctor: '::',
+			_0: _elm_lang$html$Html$text(lesson),
+			_1: {ctor: '[]'}
+		});
+};
+var _user$project$Main$lessonListView = function (lessons) {
+	return A2(
+		_elm_lang$html$Html$ul,
+		{ctor: '[]'},
+		A2(_elm_lang$core$List$map, _user$project$Main$lessonView, lessons));
+};
 var _user$project$Main$SendCourseName = function (a) {
 	return {ctor: 'SendCourseName', _0: a};
 };
@@ -8426,12 +8451,6 @@ var _user$project$Main$courseView = function (course) {
 		});
 };
 var _user$project$Main$courseListView = function (courses) {
-	return A2(
-		_elm_lang$html$Html$ul,
-		{ctor: '[]'},
-		A2(_elm_lang$core$List$map, _user$project$Main$courseView, courses));
-};
-var _user$project$Main$lessonListView = function (courses) {
 	return A2(
 		_elm_lang$html$Html$ul,
 		{ctor: '[]'},

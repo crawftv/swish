@@ -10,6 +10,8 @@ type alias Model =
     , courseList : List String
     , lessonList : List String
     , exerciseList : List Exercise
+    , selectedCourse : String
+    , selectedLesson : String
     }
 
 
@@ -25,6 +27,7 @@ type Msg
     | LessonListLoaded (List String)
     | ExerciseListLoaded (List Exercise)
     | SendCourseName String
+    | SendLessonName String
     | ClearLessonList
 
 
@@ -45,7 +48,7 @@ init =
 
 initModel : Model
 initModel =
-    { answerInput = "", courseList = [], lessonList = [], exerciseList = [] }
+    { answerInput = "", courseList = [], lessonList = [], exerciseList = [], selectedCourse = "", selectedLesson = "" }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -66,6 +69,9 @@ update msg model =
         SendCourseName courseName ->
             ( model, sendCourse courseName )
 
+        SendLessonName lessonName ->
+            ( model, sendLesson lessonName )
+
         ClearLessonList ->
             ( { model | lessonList = [] }, Cmd.none )
 
@@ -74,6 +80,9 @@ port loadLesson : (List String -> msg) -> Sub msg
 
 
 port sendCourse : String -> Cmd msg
+
+
+port sendLesson : String -> Cmd msg
 
 
 port loadCourse : (List String -> msg) -> Sub msg
@@ -108,15 +117,15 @@ courseListView courses =
 
 
 lessonView : String -> Html Msg
-lessonView course =
-    li []
-        [ text course ]
+lessonView lesson =
+    li [ onClick (SendLessonName lesson) ]
+        [ text lesson ]
 
 
 lessonListView : List String -> Html Msg
-lessonListView courses =
-    courses
-        |> List.map courseView
+lessonListView lessons =
+    lessons
+        |> List.map lessonView
         |> ul []
 
 
