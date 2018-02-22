@@ -27,8 +27,10 @@ type Msg
     | LessonListLoaded (List String)
     | ExerciseListLoaded (List Exercise)
     | SendCourseName String
-    | SendLessonName String
+    | SendLessonName
     | ClearLessonList
+    | UpdateSelectedCourse String
+    | UpdateSelectedLesson String
 
 
 main : Program Never Model Msg
@@ -48,7 +50,7 @@ init =
 
 initModel : Model
 initModel =
-    { answerInput = "", courseList = [], lessonList = [], exerciseList = [], selectedCourse = "", selectedLesson = "" }
+    { answerInput = "", courseList = [], lessonList = [], exerciseList = [], selectedCourse = "Italian", selectedLesson = "Lesson 1" }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -69,11 +71,17 @@ update msg model =
         SendCourseName courseName ->
             ( model, sendCourse courseName )
 
-        SendLessonName lessonName ->
-            ( model, sendLesson lessonName )
+        SendLessonName ->
+            ( model, sendLesson ( model.selectedCourse, model.selectedLesson ) )
 
         ClearLessonList ->
             ( { model | lessonList = [] }, Cmd.none )
+
+        UpdateSelectedCourse courseName ->
+            ( { model | selectedCourse = courseName }, Cmd.none )
+
+        UpdateSelectedLesson lessonName ->
+            ( { model | selectedLesson = lessonName }, Cmd.none )
 
 
 port loadLesson : (List String -> msg) -> Sub msg
@@ -82,7 +90,7 @@ port loadLesson : (List String -> msg) -> Sub msg
 port sendCourse : String -> Cmd msg
 
 
-port sendLesson : String -> Cmd msg
+port sendLesson : ( String, String ) -> Cmd msg
 
 
 port loadCourse : (List String -> msg) -> Sub msg
@@ -103,7 +111,7 @@ subscriptions model =
 courseView : String -> Html Msg
 courseView course =
     li
-        [ onClick (ClearLessonList)
+        [ onClick (UpdateSelectedCourse course)
         , onClick (SendCourseName course)
         ]
         [ text course ]
@@ -118,7 +126,10 @@ courseListView courses =
 
 lessonView : String -> Html Msg
 lessonView lesson =
-    li [ onClick (SendLessonName lesson) ]
+    li
+        [ onClick (UpdateSelectedLesson lesson)
+        , onClick (SendLessonName)
+        ]
         [ text lesson ]
 
 
@@ -154,4 +165,6 @@ view model =
         , text "exercises"
         , exerciseListView model.exerciseList
         , text "elm Works"
+        , text model.selectedCourse
+        , text model.selectedLesson
         ]

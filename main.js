@@ -8301,7 +8301,9 @@ var _user$project$Main$initModel = {
 	answerInput: '',
 	courseList: {ctor: '[]'},
 	lessonList: {ctor: '[]'},
-	exerciseList: {ctor: '[]'}
+	exerciseList: {ctor: '[]'},
+	selectedCourse: 'Italian',
+	selectedLesson: 'Lesson 1'
 };
 var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initModel, _1: _elm_lang$core$Platform_Cmd$none};
 var _user$project$Main$loadLesson = _elm_lang$core$Native_Platform.incomingPort(
@@ -8315,7 +8317,7 @@ var _user$project$Main$sendCourse = _elm_lang$core$Native_Platform.outgoingPort(
 var _user$project$Main$sendLesson = _elm_lang$core$Native_Platform.outgoingPort(
 	'sendLesson',
 	function (v) {
-		return v;
+		return [v._0, v._1];
 	});
 var _user$project$Main$update = F2(
 	function (msg, model) {
@@ -8363,9 +8365,10 @@ var _user$project$Main$update = F2(
 				return {
 					ctor: '_Tuple2',
 					_0: model,
-					_1: _user$project$Main$sendLesson(_p0._0)
+					_1: _user$project$Main$sendLesson(
+						{ctor: '_Tuple2', _0: model.selectedCourse, _1: model.selectedLesson})
 				};
-			default:
+			case 'ClearLessonList':
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
@@ -8373,6 +8376,22 @@ var _user$project$Main$update = F2(
 						{
 							lessonList: {ctor: '[]'}
 						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'UpdateSelectedCourse':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{selectedCourse: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			default:
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{selectedLesson: _p0._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 		}
@@ -8395,26 +8414,34 @@ var _user$project$Main$loadExerciseList = _elm_lang$core$Native_Platform.incomin
 					A2(_elm_lang$core$Json_Decode$field, 'a', _elm_lang$core$Json_Decode$string));
 			},
 			A2(_elm_lang$core$Json_Decode$field, 'q', _elm_lang$core$Json_Decode$string))));
-var _user$project$Main$Model = F4(
-	function (a, b, c, d) {
-		return {answerInput: a, courseList: b, lessonList: c, exerciseList: d};
+var _user$project$Main$Model = F6(
+	function (a, b, c, d, e, f) {
+		return {answerInput: a, courseList: b, lessonList: c, exerciseList: d, selectedCourse: e, selectedLesson: f};
 	});
 var _user$project$Main$Exercise = F2(
 	function (a, b) {
 		return {q: a, a: b};
 	});
-var _user$project$Main$ClearLessonList = {ctor: 'ClearLessonList'};
-var _user$project$Main$SendLessonName = function (a) {
-	return {ctor: 'SendLessonName', _0: a};
+var _user$project$Main$UpdateSelectedLesson = function (a) {
+	return {ctor: 'UpdateSelectedLesson', _0: a};
 };
+var _user$project$Main$UpdateSelectedCourse = function (a) {
+	return {ctor: 'UpdateSelectedCourse', _0: a};
+};
+var _user$project$Main$ClearLessonList = {ctor: 'ClearLessonList'};
+var _user$project$Main$SendLessonName = {ctor: 'SendLessonName'};
 var _user$project$Main$lessonView = function (lesson) {
 	return A2(
 		_elm_lang$html$Html$li,
 		{
 			ctor: '::',
 			_0: _elm_lang$html$Html_Events$onClick(
-				_user$project$Main$SendLessonName(lesson)),
-			_1: {ctor: '[]'}
+				_user$project$Main$UpdateSelectedLesson(lesson)),
+			_1: {
+				ctor: '::',
+				_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$SendLessonName),
+				_1: {ctor: '[]'}
+			}
 		},
 		{
 			ctor: '::',
@@ -8436,7 +8463,8 @@ var _user$project$Main$courseView = function (course) {
 		_elm_lang$html$Html$li,
 		{
 			ctor: '::',
-			_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$ClearLessonList),
+			_0: _elm_lang$html$Html_Events$onClick(
+				_user$project$Main$UpdateSelectedCourse(course)),
 			_1: {
 				ctor: '::',
 				_0: _elm_lang$html$Html_Events$onClick(
@@ -8481,7 +8509,15 @@ var _user$project$Main$view = function (model) {
 								_1: {
 									ctor: '::',
 									_0: _elm_lang$html$Html$text('elm Works'),
-									_1: {ctor: '[]'}
+									_1: {
+										ctor: '::',
+										_0: _elm_lang$html$Html$text(model.selectedCourse),
+										_1: {
+											ctor: '::',
+											_0: _elm_lang$html$Html$text(model.selectedLesson),
+											_1: {ctor: '[]'}
+										}
+									}
 								}
 							}
 						}

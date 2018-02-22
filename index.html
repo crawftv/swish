@@ -46,21 +46,23 @@
         lessonList = doc.data().LessonNames;
         app.ports.loadLesson.send(lessonList);
         });
-
     });
-    app.ports.sendLesson.subscribe(function(courseName, lessonName) {
-    var docRef = firestore.collection(courseName);
-    var query = docRef.where("course", "==", courseName).where("lessonName", "==", lessonName);
-    query.get().then(function(querySnapshot) {
-       var exerciseList = [];
-       var exerciseObject = {};
-       querySnapshot.forEach(function(doc) {
-         exerciseObject.q = doc.data().q;
-         exerciseObject.a = doc.data().a;
-         exerciseList.push(exerciseObject);
-       });
-       app.ports.loadExerciseList.send(exerciseList);
-       });
+
+
+    app.ports.sendLesson.subscribe(function(courseLessonArray) {
+      console.log(courseLessonArray)
+    // var docRef = firestore.collection(courseName);
+    // var query = docRef.where("course", "==", courseName).where("lessonName", "==", lessonName);
+    // query.get().then(function(querySnapshot) {
+    //    var exerciseList = [];
+    //    var exerciseObject = {};
+    //    querySnapshot.forEach(function(doc) {
+    //      exerciseObject.q = doc.data().q;
+    //      exerciseObject.a = doc.data().a;
+    //      exerciseList.push(exerciseObject);
+    //    });
+    //    app.ports.loadExerciseList.send(exerciseList);
+    //    });
      });
 
 
