@@ -111,7 +111,8 @@ var _user$project$Main$update = F2(
 						model,
 						{
 							selectedCourse: _p1,
-							exerciseList: {ctor: '[]'}
+							exerciseList: {ctor: '[]'},
+							selectedLesson: ''
 						}),
 					_1: _user$project$Main$sendCourse(_p1)
 				};

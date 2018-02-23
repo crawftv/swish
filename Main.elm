@@ -70,7 +70,7 @@ update msg model =
             ( { model | lessonList = [] }, Cmd.none )
 
         UpdateSelectedCourse courseName ->
-            ( { model | selectedCourse = courseName, exerciseList = [] }, sendCourse courseName )
+            ( { model | selectedCourse = courseName, exerciseList = [], selectedLesson = "" }, sendCourse courseName )
 
         UpdateSelectedLesson lessonName ->
             ( { model | selectedLesson = lessonName }, sendLesson ( model.selectedCourse, lessonName ) )
