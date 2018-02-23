@@ -8302,8 +8302,8 @@ var _user$project$Main$initModel = {
 	courseList: {ctor: '[]'},
 	lessonList: {ctor: '[]'},
 	exerciseList: {ctor: '[]'},
-	selectedCourse: 'Italian',
-	selectedLesson: 'Lesson 1'
+	selectedCourse: '',
+	selectedLesson: ''
 };
 var _user$project$Main$init = {ctor: '_Tuple2', _0: _user$project$Main$initModel, _1: _elm_lang$core$Platform_Cmd$none};
 var _user$project$Main$loadLesson = _elm_lang$core$Native_Platform.incomingPort(
@@ -8355,19 +8355,6 @@ var _user$project$Main$update = F2(
 						{exerciseList: _p0._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
-			case 'SendCourseName':
-				return {
-					ctor: '_Tuple2',
-					_0: model,
-					_1: _user$project$Main$sendCourse(_p0._0)
-				};
-			case 'SendLessonName':
-				return {
-					ctor: '_Tuple2',
-					_0: model,
-					_1: _user$project$Main$sendLesson(
-						{ctor: '_Tuple2', _0: model.selectedCourse, _1: model.selectedLesson})
-				};
 			case 'ClearLessonList':
 				return {
 					ctor: '_Tuple2',
@@ -8379,20 +8366,26 @@ var _user$project$Main$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'UpdateSelectedCourse':
+				var _p1 = _p0._0;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{selectedCourse: _p0._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
+						{
+							selectedCourse: _p1,
+							exerciseList: {ctor: '[]'}
+						}),
+					_1: _user$project$Main$sendCourse(_p1)
 				};
 			default:
+				var _p2 = _p0._0;
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{selectedLesson: _p0._0}),
-					_1: _elm_lang$core$Platform_Cmd$none
+						{selectedLesson: _p2}),
+					_1: _user$project$Main$sendLesson(
+						{ctor: '_Tuple2', _0: model.selectedCourse, _1: _p2})
 				};
 		}
 	});
@@ -8425,11 +8418,6 @@ var _user$project$Main$Exercise = F2(
 var _user$project$Main$UpdateSelectedLesson = function (a) {
 	return {ctor: 'UpdateSelectedLesson', _0: a};
 };
-var _user$project$Main$UpdateSelectedCourse = function (a) {
-	return {ctor: 'UpdateSelectedCourse', _0: a};
-};
-var _user$project$Main$ClearLessonList = {ctor: 'ClearLessonList'};
-var _user$project$Main$SendLessonName = {ctor: 'SendLessonName'};
 var _user$project$Main$lessonView = function (lesson) {
 	return A2(
 		_elm_lang$html$Html$li,
@@ -8437,11 +8425,7 @@ var _user$project$Main$lessonView = function (lesson) {
 			ctor: '::',
 			_0: _elm_lang$html$Html_Events$onClick(
 				_user$project$Main$UpdateSelectedLesson(lesson)),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$SendLessonName),
-				_1: {ctor: '[]'}
-			}
+			_1: {ctor: '[]'}
 		},
 		{
 			ctor: '::',
@@ -8455,8 +8439,8 @@ var _user$project$Main$lessonListView = function (lessons) {
 		{ctor: '[]'},
 		A2(_elm_lang$core$List$map, _user$project$Main$lessonView, lessons));
 };
-var _user$project$Main$SendCourseName = function (a) {
-	return {ctor: 'SendCourseName', _0: a};
+var _user$project$Main$UpdateSelectedCourse = function (a) {
+	return {ctor: 'UpdateSelectedCourse', _0: a};
 };
 var _user$project$Main$courseView = function (course) {
 	return A2(
@@ -8465,12 +8449,7 @@ var _user$project$Main$courseView = function (course) {
 			ctor: '::',
 			_0: _elm_lang$html$Html_Events$onClick(
 				_user$project$Main$UpdateSelectedCourse(course)),
-			_1: {
-				ctor: '::',
-				_0: _elm_lang$html$Html_Events$onClick(
-					_user$project$Main$SendCourseName(course)),
-				_1: {ctor: '[]'}
-			}
+			_1: {ctor: '[]'}
 		},
 		{
 			ctor: '::',
@@ -8526,6 +8505,7 @@ var _user$project$Main$view = function (model) {
 			}
 		});
 };
+var _user$project$Main$ClearLessonList = {ctor: 'ClearLessonList'};
 var _user$project$Main$ExerciseListLoaded = function (a) {
 	return {ctor: 'ExerciseListLoaded', _0: a};
 };

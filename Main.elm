@@ -26,8 +26,6 @@ type Msg
     | CourseListLoaded (List String)
     | LessonListLoaded (List String)
     | ExerciseListLoaded (List Exercise)
-    | SendCourseName String
-    | SendLessonName
     | ClearLessonList
     | UpdateSelectedCourse String
     | UpdateSelectedLesson String
@@ -50,7 +48,7 @@ init =
 
 initModel : Model
 initModel =
-    { answerInput = "", courseList = [], lessonList = [], exerciseList = [], selectedCourse = "Italian", selectedLesson = "Lesson 1" }
+    { answerInput = "", courseList = [], lessonList = [], exerciseList = [], selectedCourse = "", selectedLesson = "" }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -68,20 +66,14 @@ update msg model =
         ExerciseListLoaded loadExerciseList ->
             ( { model | exerciseList = loadExerciseList }, Cmd.none )
 
-        SendCourseName courseName ->
-            ( model, sendCourse courseName )
-
-        SendLessonName ->
-            ( model, sendLesson ( model.selectedCourse, model.selectedLesson ) )
-
         ClearLessonList ->
             ( { model | lessonList = [] }, Cmd.none )
 
         UpdateSelectedCourse courseName ->
-            ( { model | selectedCourse = courseName }, Cmd.none )
+            ( { model | selectedCourse = courseName, exerciseList = [] }, sendCourse courseName )
 
         UpdateSelectedLesson lessonName ->
-            ( { model | selectedLesson = lessonName }, Cmd.none )
+            ( { model | selectedLesson = lessonName }, sendLesson ( model.selectedCourse, lessonName ) )
 
 
 port loadLesson : (List String -> msg) -> Sub msg
@@ -112,7 +104,6 @@ courseView : String -> Html Msg
 courseView course =
     li
         [ onClick (UpdateSelectedCourse course)
-        , onClick (SendCourseName course)
         ]
         [ text course ]
 
@@ -128,7 +119,6 @@ lessonView : String -> Html Msg
 lessonView lesson =
     li
         [ onClick (UpdateSelectedLesson lesson)
-        , onClick (SendLessonName)
         ]
         [ text lesson ]
 
