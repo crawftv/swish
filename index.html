@@ -8,6 +8,11 @@
   <script src="main.js"></script>
   <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
   <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.10.1/firebase-auth.js"></script>
+  <script src="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.js"></script>
+
+  <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.6.2/firebaseui.css" />
+
 
 </head>
 
@@ -34,11 +39,7 @@
       courseList = [];
       courseList = doc.data().Courses;
       app.ports.loadCourse.send(courseList);
-    })
-
-
-
-
+    });
     app.ports.sendCourse.subscribe(function(courseName) {
       var lessonListRef = firestore.collection(courseName).doc("LessonList");
       lessonListRef.get().then(function(doc){
@@ -48,8 +49,6 @@
         app.ports.loadLesson.send(lessonList);
         });
     });
-
-
     app.ports.sendLesson.subscribe(function(courseLessonArray) {
 
     var docRef = firestore.collection(courseLessonArray[0]);
@@ -67,5 +66,39 @@
      });
 
 
+      // FirebaseUI config.
+      var uiConfig = {
+        signInSuccessUrl: 'http://localhost:8000/index.html',
+        signInOptions: [
+          // Leave the lines as is for the providers you want to offer your users.
+          firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+          firebase.auth.FacebookAuthProvider.PROVIDER_ID,
+          firebase.auth.GithubAuthProvider.PROVIDER_ID,
+          firebase.auth.EmailAuthProvider.PROVIDER_ID,
+          firebase.auth.PhoneAuthProvider.PROVIDER_ID
+        ],
+        // Terms of service url.
+        tosUrl: '<your-tos-url>'
+      };
+
+      // Initialize the FirebaseUI Widget using Firebase.
+      var ui = new firebaseui.auth.AuthUI(firebase.auth());
+      // The start method will wait until the DOM is loaded.
+      ui.start('#firebaseui-auth-container', uiConfig);
+
+
+      firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+        console.log(user.displayName);
+        console.log(user.email);
+        console.log(user);
+        document.getElementById("firebaseui-auth-container").style.display = "none";
+
+      } else {
+        console.log("no user")
+      }
+    });
     </script>
+    <div id="firebaseui-auth-container">
+    </div>
 </body>

@@ -12,12 +12,18 @@ type alias Model =
     , exerciseList : List Exercise
     , selectedCourse : String
     , selectedLesson : String
+    , user : Maybe User
     }
 
 
 type alias Exercise =
     { q : String
     , a : String
+    }
+
+
+type alias User =
+    { email : String
     }
 
 
@@ -48,7 +54,7 @@ init =
 
 initModel : Model
 initModel =
-    { answerInput = "", courseList = [], lessonList = [], exerciseList = [], selectedCourse = "", selectedLesson = "" }
+    { answerInput = "", courseList = [], lessonList = [], exerciseList = [], selectedCourse = "", selectedLesson = "", user = Nothing }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
