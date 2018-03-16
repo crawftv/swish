@@ -30,10 +30,7 @@
     var firestore = firebase.firestore();
     var courseRef = firestore.collection("Courses").doc("CourseList");
 
-    // var lessonListRef = firestore.collection("Italian").doc("LessonList");
     var app = Elm.Main.fullscreen();
-    // var course = "Italian";
-    // var lessonName = "Lesson 1";
 
     courseRef.get().then(function(doc){
       courseList = [];
@@ -66,6 +63,7 @@
      });
 
 
+
       // FirebaseUI config.
       var uiConfig = {
         signInSuccessUrl: 'http://localhost:8000/index.html',
@@ -78,7 +76,7 @@
           firebase.auth.PhoneAuthProvider.PROVIDER_ID
         ],
         // Terms of service url.
-        tosUrl: '<your-tos-url>'
+        // tosUrl: '<your-tos-url>'
       };
 
       // Initialize the FirebaseUI Widget using Firebase.
@@ -87,13 +85,14 @@
       ui.start('#firebaseui-auth-container', uiConfig);
 
 
+
       firebase.auth().onAuthStateChanged(function(user) {
         if (user) {
-        console.log(user.displayName);
-        console.log(user.email);
-        console.log(user);
         document.getElementById("firebaseui-auth-container").style.display = "none";
-
+        var swishUser = { };
+        swishUser.email = user.email;
+        app.ports.loadUser.send(swishUser);
+        console.log(swishUser)
       } else {
         console.log("no user")
       }

@@ -35,6 +35,7 @@ type Msg
     | ClearLessonList
     | UpdateSelectedCourse String
     | UpdateSelectedLesson String
+    | LoadUser User
 
 
 main : Program Never Model Msg
@@ -79,7 +80,10 @@ update msg model =
             ( { model | selectedCourse = courseName, exerciseList = [], selectedLesson = "" }, sendCourse courseName )
 
         UpdateSelectedLesson lessonName ->
-            ( { model | selectedLesson = lessonName }, sendLesson ( model.selectedCourse, lessonName ) )
+            ( { model | selectedLesson = lessonName, exerciseList = [] }, sendLesson ( model.selectedCourse, lessonName ) )
+
+        LoadUser swishUser ->
+            ( { model | user = Just swishUser }, Cmd.none )
 
 
 port loadLesson : (List String -> msg) -> Sub msg
@@ -97,12 +101,16 @@ port loadCourse : (List String -> msg) -> Sub msg
 port loadExerciseList : (List Exercise -> msg) -> Sub msg
 
 
+port loadUser : (User -> msg) -> Sub msg
+
+
 subscriptions : Model -> Sub Msg
 subscriptions model =
     Sub.batch
         [ loadCourse CourseListLoaded
         , loadLesson LessonListLoaded
         , loadExerciseList ExerciseListLoaded
+        , loadUser LoadUser
         ]
 
 
@@ -151,16 +159,30 @@ exerciseListView exercises =
         |> tbody []
 
 
+headerView : Maybe User -> Html Msg
+headerView user =
+    case user of
+        Nothing ->
+            div [] [ text "sign-in" ]
+
+        Just user ->
+            div []
+                [ text (user.email)
+                , button [ type_ "button" ] [ text "sign out" ]
+                ]
+
+
 view : Model -> Html Msg
 view model =
     div []
-        [ text "Courses"
+        [ headerView model.user
+        , text "Courses"
         , courseListView model.courseList
         , text "lessons"
         , lessonListView model.lessonList
         , text "exercises"
         , exerciseListView model.exerciseList
-        , text "elm Works"
         , text model.selectedCourse
         , text model.selectedLesson
+        , div [] [ text "elm Works" ]
         ]
